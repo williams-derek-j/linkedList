@@ -39,14 +39,14 @@ export default class Hashmap {
     }
 
     hash(key) {
-        let hashCode = 0;
+        let hashCode = 0
 
-        const primeNumber = 31;
+        const primeNumber = 31
         for (let i = 0; i < key.length; i++) {
-            hashCode = primeNumber * hashCode + key.charCodeAt(i);
+            hashCode = primeNumber * hashCode + key.charCodeAt(i)
             hashCode = hashCode % this.capacity
         }
-        return hashCode;
+        return hashCode
     }
 
     set(key, value) {
@@ -56,7 +56,7 @@ export default class Hashmap {
         const bucket = this.data[hash]
 
         if (bucket.contains(key)) {
-            bucket.set(key, value);
+            bucket.set(key, value)
             // const modified = bucket.getNode(key)
             // modified.value = value
         } else {
@@ -75,20 +75,21 @@ export default class Hashmap {
         }
     }
 
-    has(key) {
-        const hash = this.hash(key)
-        const bucket = this.data[hash]
-
-        return bucket.contains(key);
-    }
-
     remove(key) {
         const hash = this.hash(key)
         const bucket = this.data[hash]
 
         if (bucket.contains(key)) {
-            bucket.removeAt(bucket.findIndex(key))
+            bucket.remove(key)
+            // bucket.removeAt(bucket.findIndex(key))
         }
+    }
+
+    has(key) {
+        const hash = this.hash(key)
+        const bucket = this.data[hash]
+
+        return bucket.contains(key)
     }
 
     length() {

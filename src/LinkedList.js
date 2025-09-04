@@ -1,23 +1,8 @@
-import Node from "./Node";
+import Node from "./Node"
 
 export default class LinkedList {
     constructor() {
-        this.root = null;
-    }
-
-    append(key, value) {
-        const node = new Node(key, value)
-
-        if (this.root) {
-            let prev = this.root
-
-            while (prev.nextNode) {
-                prev = prev.nextNode;
-            }
-            prev.nextNode = node;
-        } else {
-            this.root = node;
-        }
+        this.root = null
     }
 
     set(key, value) {
@@ -25,33 +10,68 @@ export default class LinkedList {
 
         if (node) {
             node.value = value
+        } else {
+            return new Error("Key not found!")
+        }
+    }
+
+    append(key, value) {
+        if (this.contains(key)) {
+            this.set(key, value)
+
+            return new Error("Tried to append already-existing key! Setting new value on key instead...")
+        } else {
+            const node = new Node(key, value)
+
+            if (this.root) {
+                let prev = this.root
+
+                while (prev.nextNode) {
+                    prev = prev.nextNode
+                }
+                prev.nextNode = node
+            } else {
+                this.root = node
+            }
         }
     }
 
     prepend(key, value) {
-        const node = new Node(key, value)
+        if (this.contains(key)) {
+            this.set(key, value)
 
-        node.nextNode = this.root;
-        this.root = node
+            return new Error("Tried to prepend already-existing key! Setting new value on key instead...")
+        } else {
+            const node = new Node(key, value)
+
+            node.nextNode = this.root
+            this.root = node
+        }
     }
 
     insertAt(index, key, value) {
-        const node = new Node(key, value)
+        if (this.contains(key)) {
+            this.set(key, value)
 
-        let prev = this.root
-        for (let i = 0; i < index - 1; i++) {
-            if (prev.nextNode) {
-                prev = prev.nextNode
-            } else {
-                return new Error("Index out of bounds!")
+            return new Error("Tried to prepend already-existing key! Setting new value on key instead...")
+        } else {
+            const node = new Node(key, value)
+
+            let prev = this.root
+            for (let i = 0; i < index - 1; i++) {
+                if (prev.nextNode) {
+                    prev = prev.nextNode
+                } else {
+                    return new Error("Index out of bounds!")
+                }
             }
+            node.nextNode = prev.nextNode
+            prev.nextNode = node
         }
-        node.nextNode = prev.nextNode;
-        prev.nextNode = node;
     }
 
     removeAt(index) {
-        let prev;
+        let prev
         let target = this.root
 
         for (let i = 0; i < index; i++) {
@@ -59,68 +79,26 @@ export default class LinkedList {
             target = target.nextNode
         }
         prev.nextNode = target.nextNode
+        target.nextNode = null
+        target.key = null
+        target.value = null
         target = null
     }
 
-    size() {
-        let i = 0
-        let node
-
-        if (this.root) {
-            node = this.root
-            i = 1
-        }
+    remove(key) {
+        let node = this.getNode(key)
 
         if (node) {
-            while (node.nextNode) {
-                node = node.nextNode;
-                i++
-            }
+            const index = this.findIndex(key)
+
+            const prev = this.getNodeAt(index - 1)
+            prev.nextNode = node.nextNode
+
+            node.nextNode = null
+            node.key = null
+            node.value = null
+            node = null
         }
-        return i
-    }
-
-    head() {
-        return this.root
-    }
-
-    tail() {
-        if (this.root) {
-            let node = this.root
-
-            while (node.nextNode) {
-                node = node.nextNode;
-            }
-            return node
-        } else {
-            return null
-        }
-    }
-
-    pop() {
-        let prev;
-        let node = this.root
-
-        while (node.nextNode) {
-            prev = node
-            node = node.nextNode;
-        }
-        if (prev) {
-            prev.nextNode = null
-        }
-        return node
-    }
-
-    contains(key) {
-        let node = this.root
-
-        while (node) {
-            if (node.key === key) {
-                return true
-            }
-            node = node.nextNode
-        }
-        return false
     }
 
     findIndex(key) {
@@ -158,6 +136,67 @@ export default class LinkedList {
             } else {
                 return new Error("Index out of bounds!")
             }
+        }
+        return node
+    }
+
+    contains(key) {
+        let node = this.root
+
+        while (node) {
+            if (node.key === key) {
+                return true
+            }
+            node = node.nextNode
+        }
+        return false
+    }
+
+    size() {
+        let i = 0
+        let node
+
+        if (this.root) {
+            node = this.root
+            i = 1
+        }
+
+        if (node) {
+            while (node.nextNode) {
+                node = node.nextNode
+                i++
+            }
+        }
+        return i
+    }
+
+    head() {
+        return this.root
+    }
+
+    tail() {
+        if (this.root) {
+            let node = this.root
+
+            while (node.nextNode) {
+                node = node.nextNode
+            }
+            return node
+        } else {
+            return null
+        }
+    }
+
+    pop() {
+        let prev
+        let node = this.root
+
+        while (node.nextNode) {
+            prev = node
+            node = node.nextNode
+        }
+        if (prev) {
+            prev.nextNode = null
         }
         return node
     }
