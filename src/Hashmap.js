@@ -29,7 +29,7 @@ export default class Hashmap {
             this.capacity *= 2
 
             data.forEach((entry) => {
-                this.set(entry[0], entry[1])
+                this.set(entry[0], entry[1]) // this could loop infinitely if capacity isn't doubled in code above
             })
 
             return true
@@ -57,8 +57,6 @@ export default class Hashmap {
 
         if (bucket.contains(key)) {
             bucket.set(key, value)
-            // const modified = bucket.getNode(key)
-            // modified.value = value
         } else {
             bucket.append(key, value)
         }
@@ -68,21 +66,27 @@ export default class Hashmap {
         const hash = this.hash(key)
         const bucket = this.data[hash]
 
-        if (bucket.contains(key)) {
-            return bucket.getNode(key).value
+        const node = bucket.getNode(key)
+        if (node) {
+            return node.value
         } else {
             return null
         }
+        // if (bucket.contains(key)) {
+        //     return bucket.getNode(key).value
+        // } else {
+        //     return null
+        // }
     }
 
     remove(key) {
         const hash = this.hash(key)
         const bucket = this.data[hash]
 
-        if (bucket.contains(key)) {
-            bucket.remove(key)
-            // bucket.removeAt(bucket.findIndex(key))
-        }
+        bucket.remove(key)
+        // if (bucket.contains(key)) {
+        //     bucket.remove(key)
+        // }
     }
 
     has(key) {

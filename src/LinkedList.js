@@ -51,9 +51,21 @@ export default class LinkedList {
 
     insertAt(index, key, value) {
         if (this.contains(key)) {
-            this.set(key, value)
+            const node = this.getNode(key)
 
-            return new Error("Tried to prepend already-existing key! Setting new value on key instead...")
+            let prev = this.root
+            for (let i = 0; i < index - 1; i++) {
+                if (prev.nextNode) {
+                    prev = prev.nextNode
+                } else {
+                    return new Error("Tried to insert already-existing key with an index out of bounds! Key and its value are unchanged.")
+                }
+            }
+            node.value = value
+            node.nextNode = prev.nextNode
+            prev.nextNode = node
+
+            return new Error("Tried to insert already-existing key! Setting new value on key instead and updating index...")
         } else {
             const node = new Node(key, value)
 
@@ -62,7 +74,7 @@ export default class LinkedList {
                 if (prev.nextNode) {
                     prev = prev.nextNode
                 } else {
-                    return new Error("Index out of bounds!")
+                    return new Error("Index out of bounds! Key not set.")
                 }
             }
             node.nextNode = prev.nextNode
@@ -78,36 +90,44 @@ export default class LinkedList {
             prev = target
             target = target.nextNode
         }
-        prev.nextNode = target.nextNode
-        target.nextNode = null
-        target.key = null
-        target.value = null
+        if (target) {
+            prev.nextNode = target.nextNode
+            target.nextNode = null
+            target.key = null
+            target.value = null
+        } else {
+            return new Error("Index out of bounds!")
+        }
         target = null
     }
 
     remove(key) {
-        let node = this.getNode(key)
+        let got = this.get(key) // returns [index, {key, value, nextNode}]
 
         if (node) {
-            const index = this.findIndex(key)
+            const index = got[0]
+            let node = got[1]
 
             const prev = this.getNodeAt(index - 1)
-            prev.nextNode = node.nextNode
+            prev.nextNode = node[1].nextNode
 
             node.nextNode = null
             node.key = null
             node.value = null
             node = null
+        } else {
+            return new Error("Key not found!")
         }
+        got = null
     }
 
-    findIndex(key) {
+    get(key) {
         let i = 0
         let node = this.root
 
         while (node) {
             if (node.key === key) {
-                return i
+                return [i, node]
             }
             node = node.nextNode
             i++
