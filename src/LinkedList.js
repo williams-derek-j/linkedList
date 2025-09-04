@@ -2,12 +2,11 @@ import Node from "./Node";
 
 export default class LinkedList {
     constructor() {
-        //this.data = []
         this.root = null;
     }
 
-    append(value) {
-        const node = new Node(value)
+    append(key, value) {
+        const node = new Node(key, value)
 
         if (this.root) {
             let prev = this.root
@@ -19,24 +18,25 @@ export default class LinkedList {
         } else {
             this.root = node;
         }
-
-        // this.data.push(node)
-
-        //            this.data[this.data.length - 1].nextNode = node
     }
 
-    prepend(value) {
-        const node = new Node(value)
+    set(key, value) {
+        const node = this.getNode(key)
+
+        if (node) {
+            node.value = value
+        }
+    }
+
+    prepend(key, value) {
+        const node = new Node(key, value)
 
         node.nextNode = this.root;
         this.root = node
-        // node.nextNode = this.data[0]
-        //
-        // this.data.unshift(node)
     }
 
-    insertAt(index, value) {
-        const node = new Node(value)
+    insertAt(index, key, value) {
+        const node = new Node(key, value)
 
         let prev = this.root
         for (let i = 0; i < index - 1; i++) {
@@ -46,14 +46,8 @@ export default class LinkedList {
                 return new Error("Index out of bounds!")
             }
         }
-
         node.nextNode = prev.nextNode;
         prev.nextNode = node;
-        // node.nextNode = this.data[index]
-        //
-        // this.data[index - 1].nextNode = node
-        //
-        // this.data.splice(index, 0, node)
     }
 
     removeAt(index) {
@@ -66,9 +60,6 @@ export default class LinkedList {
         }
         prev.nextNode = target.nextNode
         target = null
-        // this.data[index - 1].nextNode = this.data[index + 1]
-        //
-        // this.data.slice(index, index + 1)
     }
 
     size() {
@@ -104,21 +95,6 @@ export default class LinkedList {
         } else {
             return null
         }
-        // return this.data[this.data.length - 1]
-    }
-
-    at(index) {
-        let node = this.root
-
-        for (let i = 0; i < index; i++) {
-            if (node) {
-                node = node.nextNode
-            } else {
-                return new Error("Index out of bounds!")
-            }
-        }
-        return node
-        // return this.data[index]
     }
 
     pop() {
@@ -132,46 +108,108 @@ export default class LinkedList {
         if (prev) {
             prev.nextNode = null
         }
-
         return node
-        // return this.data.pop()
     }
 
-    contains(value) {
+    contains(key) {
         let node = this.root
 
         while (node) {
-            if (node.value === value) {
+            if (node.key === key) {
                 return true
             }
             node = node.nextNode
         }
         return false
-        // this.data.forEach((node) => {
-        //     if (node.value === value) {
-        //         return true
-        //     }
-        // })
     }
 
-    find(value) {
+    findIndex(key) {
         let i = 0
         let node = this.root
 
         while (node) {
-            if (node.value === value) {
+            if (node.key === key) {
                 return i
             }
             node = node.nextNode
             i++
         }
         return null
-        // for (let i = 0; i < this.data.length; i++) {
-        //     if (this.data[i].value === value) {
-        //         return i
-        //     }
-        // }
-        // return null
+    }
+
+    getNode(key) {
+        let node = this.root
+
+        while (node) {
+            if (node.key === key) {
+                return node
+            }
+            node = node.nextNode
+        }
+        return null
+    }
+
+    getNodeAt(index) {
+        let node = this.root
+
+        for (let i = 0; i < index; i++) {
+            if (node) {
+                node = node.nextNode
+            } else {
+                return new Error("Index out of bounds!")
+            }
+        }
+        return node
+    }
+
+    keys() {
+        let node = this.root
+        let keys = []
+
+        while (node) {
+            keys.push(node.key)
+
+            node = node.nextNode
+        }
+        return keys
+    }
+
+    values() {
+        let node = this.root
+        let values = []
+
+        while (node) {
+            values.push(node.value)
+
+            node = node.nextNode
+        }
+        return values
+    }
+
+    entries() {
+        let node = this.root
+        let entries = []
+
+        while (node) {
+            entries.push([node.key, node.value])
+
+            node = node.nextNode
+        }
+        return entries
+    }
+
+    clear() {
+        let prev
+        let node = this.root
+
+        if (node) {
+            while (node.nextNode) {
+                prev = node
+                node = node.nextNode
+                prev.nextNode = null
+            }
+            node = null
+        }
     }
 
     toString() {
@@ -184,10 +222,6 @@ export default class LinkedList {
 
             node = node.nextNode
         }
-        // this.data.forEach((node) => {
-        //     string += `( ${node.value} ) -> `
-        // })
-
         return string
     }
 }
